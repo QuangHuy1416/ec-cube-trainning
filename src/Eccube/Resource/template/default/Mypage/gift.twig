@@ -1,0 +1,146 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+
+http://www.lockon.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+<html lang="{{ eccube_config.locale }}">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# product: http://ogp.me/ns/product#">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="eccube-csrf-token" content="{{ csrf_token(constant('Eccube\\Common\\Constant::TOKEN_NAME')) }}">
+    <title>{{ BaseInfo.shop_name }}{% if subtitle is defined and subtitle is not empty %} / {{ subtitle }}{% elseif title is defined and title is not empty %} / {{ title }}{% endif %}</title>
+    {% if Page.author is not empty %}
+        <meta name="author" content="{{ Page.author }}">
+    {% endif %}
+    {% if Page.description is not empty %}
+        <meta name="description" content="{{ Page.description }}">
+    {% endif %}
+    {% if Page.keyword is not empty %}
+        <meta name="keywords" content="{{ Page.keyword }}">
+    {% endif %}
+    {% if Page.meta_robots is not empty %}
+        <meta name="robots" content="{{ Page.meta_robots }}">
+    {% endif %}
+    {% if Page.meta_tags is not empty %}
+        {{ include(template_from_string(Page.meta_tags)) }}
+    {% endif %}
+    <link rel="icon" href="{{ asset('assets/img/common/favicon.ico', 'user_data') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    {% block stylesheet %}{% endblock %}
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script>
+        $(function() {
+            $.ajaxSetup({
+                'headers': {
+                    'ECCUBE-CSRF-TOKEN': $('meta[name="eccube-csrf-token"]').attr('content')
+                }
+            });
+        });
+    </script>
+    {# Layout: HEAD #}
+    {% if Layout.Head %}
+        {{ include('block.twig', {'Blocks': Layout.Head}) }}
+    {% endif %}
+    {# プラグイン用styleseetやmetatagなど #}
+    {% if plugin_assets is defined %}{{ include('@admin/snippet.twig', { snippets: plugin_assets }) }}{% endif %}
+    <link rel="stylesheet" href="{{ asset('assets/css/customize.css', 'user_data') }}">
+</head>
+<body id="page_{{ app.request.get('_route') }}" class="{{ body_class|default('other_page') }}">
+    <div class="gift-content">
+        <div class="gift d-flex flex-column">
+            <div class="gift-header d-flex flex-column justify-content-center">
+                <div class="header-thanks d-flex flex-column justify-content-center">
+                    <span class="text-uppercase font-weight-bold">give thanks!</span>
+                </div>
+                <div class="header-step d-flex flex-column justify-content-center font-weight-light">
+                    <lable class="text-uppercase">STEP1</lable>
+                    <span>贈る相手を決める</span>
+                </div>
+            </div>
+            <div class="gift-body">
+                {# Hiển thị form #}
+                <div class="ec-headerSearch">
+                    <form method="POST" class="searchform" action="{{ path('mypage_thanks_registration') }}">
+                        <div class="ec-headerSearch__keyword">
+                            <div class="ec-input">
+                                <button class="ec-headerSearch__keywordBtn" type="submit">
+                                    <div class="ec-icon">
+                                        <img src="{{ asset('assets/icon/search-dark.svg') }}" alt="">
+                                    </div>
+                                </button>
+                                {{ form_widget(form.name, {'id': null, 'attr': {'class': 'search-name', 'placeholder' : 'common.search_keyword' }} ) }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                {# <div class="ec-headerSearch__keyword">
+                    <div class="ec-input">
+                        <button class="ec-headerSearch__keywordBtn" type="submit">
+                            <div class="ec-icon">
+                                <img src="{{ asset('assets/icon/search-dark.svg') }}" alt="">
+                            </div>
+                        </button>
+                        {{ form_widget(form.name, {'id': null, 'attr': {'class': 'search-name', 'placeholder'  : 'common.search_keyword' }} ) }}
+                    </div>
+                </div> #}
+                {# Hiển thị form #}
+                {# Hiển thị thẻ input tìm kiếm #}
+                <div class="form-group has-search">
+                    <i class="fa fa-search form-control-feedback"></i>
+                    <input type="text" class="form-control input-search-customer" id="search-customer" value="お名前&nbsp;" placeholder="LDAPを調べて入力してください">
+                </div>
+                {# Hiển thị thẻ input tìm kiếm #}
+                <div class="box-customer" style="padding-bottom: 84px;">
+                    <div class="box-customer-title text-left font-weight-light">
+                        <label>Search results</label>
+                    </div>
+                    {{ dump(cus) }}
+                    <div id="list_customer" style="max-height: 430px;">
+                        <form action=" path('mypage_thanks_registration') " id="frm-customer-gift" method="post">
+                            <input type="hidden" name="_token" value="W2Bim14-fG8UZA773eMqWXT7jVSv9MsW2zHmWPGEedA">
+                            <input type="hidden" name="customer_id" id="customer_id">
+                            <div class="list-customer-gift">
+                                <!--For-->
+                                {% for Customer in customers %}
+                                    <div class="item btn-box-shadow-inset d-flex justify-content-center align-items-center text-white" data-id="{{Customer.id}}">
+                                        <span>{{Customer.name01}}&nbsp;{{Customer.name02}}</span>
+                                    </div>
+                                {% endfor %}
+                                <div class="item btn-box-shadow-inset d-flex justify-content-center align-items-center text-white" data-id="464">
+                                    <span>Taro Tanaka</span>
+                                </div>
+                                <div class="item btn-box-shadow-inset d-flex justify-content-center align-items-center text-white" data-id="462">
+                                    <span>Saishunkan Taro</span>
+                                </div>
+                                <div class="item btn-box-shadow-inset d-flex justify-content-center align-items-center text-white" data-id="472">
+                                    <span>thuynt&nbsp;</span>
+                                </div>
+                                <!--For-->
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gift-footer fixed-bottom d-flex flex-column">
+            <div class="gift-footer-btn">
+                <div class="btn-black d-flex justify-content-center align-items-center text-decoration-none">Go back one step</div>
+                <a href="#" 
+                    class="btn-open-modal d-flex justify-content-center align-items-center text-white text-decoration-none" 
+                    data-toggle="modal" data-target="#modal_redirect_mypage">
+                    Cancel registration</a>
+            </div>
+            <div class="gift-footer-background">
+            </div>
+        </div>
+    </div>
+</body>

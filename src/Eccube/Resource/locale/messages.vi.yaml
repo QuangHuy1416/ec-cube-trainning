@@ -222,6 +222,7 @@ front.mypage.nav__customer: Chỉnh sửa thông tin
 front.mypage.nav__customer_complete: Chỉnh sửa thông tin khách hàng (Đã hoàn thành)
 front.mypage.nav__customer_address: Địa chỉ giao hàng
 front.mypage.nav__withdrow: Hủy bỏ thành viên
+front.mypage.thanks__registration: Gửi quà tặng
 front.mypage.history_count: Bạn có %count% mục trong lịch sử đặt hàng.
 front.mypage.history_not_found: Không tìm thấy lịch sử đặt hàng.
 front.mypage.message_not_found: Không tìm thấy
